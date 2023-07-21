@@ -1,14 +1,21 @@
 {
 	"image": "mcr.microsoft.com/devcontainers/universal:2",
 	"features": {
-		"ghcr.io/devcontainers/features/aws-cli:1": {
-			"version": "latest"
-		},
 		"ghcr.io/devcontainers-contrib/features/terraform-asdf:2": {
-			"version": "v1.5.3"
+			"version": "1.5.0"
 		},
 		"ghcr.io/devcontainers-contrib/features/terraform-ls-asdf:2": {
 			"version": "latest"
+		}
+	},
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {		
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"hashicorp.terraform",
+				"shd101wyy.markdown-preview-enhanced"
+			]
 		}
 	}
 }
