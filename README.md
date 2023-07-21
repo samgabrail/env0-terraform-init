@@ -45,6 +45,7 @@ commands will detect it and remind you to do so if necessary.
 
 Also, notice that a new `.terraform` folder was generated with the following content:
 
+```
 ├── .terraform
 │   └── providers
 │       └── registry.terraform.io
@@ -53,7 +54,7 @@ Also, notice that a new `.terraform` folder was generated with the following con
 │                   └── 3.18.0
 │                       └── linux_amd64
 │                           └── terraform-provider-vault_v3.18.0_x5
-
+```
 
 Also notice a new file was created called `.terraform.lock.hcl`
 
@@ -156,3 +157,26 @@ module "users" {
 
 Now try running `terraform plan` and notice the error message.
 
+## Upgrade/Downgrade Provider or Module Version
+
+Let's see how to override the `.terraform.lock.hcl` file to upgrade or downgrade a provider or module version.
+
+In our example, we'll upgrade the Vault provider version from `3.17.0` to `3.18.0`.
+
+In the `main.tf` file, change the version to `3.18.0` as shown below.
+
+```go
+terraform {
+  required_providers {
+    vault = {
+      source = "hashicorp/vault"
+      version = "3.18.0"
+    }
+  }
+}
+```
+
+Now try to run `terraform plan` and notice the error message indicating the need to use `terraform init -upgrade`.
+
+
+If you try to run `terraform init` without the `-upgrade` option, you'll get a similar message.
