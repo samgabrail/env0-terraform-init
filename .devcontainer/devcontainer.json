@@ -6,6 +6,9 @@
 		},
 		"ghcr.io/devcontainers-contrib/features/terraform-ls-asdf:2": {
 			"version": "latest"
+		},
+		"ghcr.io/devcontainers-contrib/features/vault-asdf:2": {
+			"version": "1.14.0"
 		}
 	},
 	"customizations": {
