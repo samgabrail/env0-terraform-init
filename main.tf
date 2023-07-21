@@ -6,7 +6,7 @@ resource "vault_policy" "users" {
   name   = "users-policy"
   policy = <<EOT
     path "secret/data/users" {
-      capabilities = ["create", "read", "update", "delete"]
+      capabilities = ["create", "read", "update", "delete", "list"]
     }
   EOT
 }
