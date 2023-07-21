@@ -2,7 +2,7 @@
 	"image": "mcr.microsoft.com/devcontainers/universal:2",
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/terraform-asdf:2": {
-			"version": "1.5.0"
+			"version": "1.5.3"
 		},
 		"ghcr.io/devcontainers-contrib/features/terraform-ls-asdf:2": {
 			"version": "latest"
