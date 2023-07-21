@@ -17,7 +17,34 @@ Now open a new terminal tab and initialize terraform.
 terraform init
 ```
 
-Notice that a new `.terraform` folder was generated with the following content:
+Output:
+
+```
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding latest version of hashicorp/vault...
+- Installing hashicorp/vault v3.18.0...
+- Installed hashicorp/vault v3.18.0 (signed by HashiCorp)
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
+Also, notice that a new `.terraform` folder was generated with the following content:
+
 ├── .terraform
 │   └── providers
 │       └── registry.terraform.io
@@ -67,7 +94,7 @@ export VAULT_TOKEN=root
 Now let's run terraform plan:
 
 ```bash
-terraform plan -var 'user_password=p@a55'
+terraform plan
 ```
 
 ## Run Terraform Apply
@@ -75,10 +102,57 @@ terraform plan -var 'user_password=p@a55'
 Run `terraform apply` to commit the changes.
 
 ```bash
-terraform apply -var 'user_password=p@a55'
+terraform apply
 ```
 
-You can now log into Vault with the following credentials:
+## Login to Vault
 
-username: 
-password: p@55
+You can now log into Vault with any of the 3 users' credentials. Let's use Sam's:
+
+username: sam
+password: sampass
+
+Open a new terminal window and run the following:
+
+```bash
+export VAULT_ADDR='http://127.0.0.1:8200'
+vault login -method=userpass username=sam password=sampass
+```
+
+You can also use the Vault UI to sign in. Make sure to select the `username` Method, then enter the username and password.
+
+## Refactor for Modules
+
+Let's now refactor our code to create a module for the users. The point of this example is to show you the need to re-run the `terraform init` command to initialize the module.
+
+In `main.tf`.
+
+Comment the following:
+
+```py
+# resource "vault_generic_secret" "user" {
+#   for_each = var.users
+
+#   path = "auth/${vault_auth_backend.userpass.path}/users/${each.key}"
+
+#   data_json = jsonencode({
+#     password = each.value.password
+#     policies = [vault_policy.users.name]
+#   })
+
+#   depends_on = [vault_auth_backend.userpass]
+# }
+```
+
+and uncomment the following:
+
+```go
+module "users" {
+  source = "./modules/users"
+  users = var.users
+  policy_names = [vault_policy.users.name]
+}
+```
+
+Now try running `terraform plan` and notice the error message.
+
