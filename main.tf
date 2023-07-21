@@ -1,13 +1,11 @@
 provider "vault" {
-  # The Vault address and token will be read from the TF_VAR_vault_address and TF_VAR_vault_token environment variables
   address = var.vault_address
-  token   = var.vault_token
 }
 
-resource "vault_policy" "example" {
-  name   = "example-policy"
+resource "vault_policy" "users" {
+  name   = "users-policy"
   policy = <<EOT
-    path "secret/data/example" {
+    path "secret/data/users" {
       capabilities = ["create", "read", "update", "delete"]
     }
   EOT
@@ -15,13 +13,18 @@ resource "vault_policy" "example" {
 
 resource "vault_auth_backend" "userpass" {
   type = "userpass"
+  path = "userpass"
 }
 
-resource "vault_generic_secret" "example_user" {
-  path = "${vault_auth_backend.userpass.path}/users/example-user"
+resource "vault_generic_secret" "user" {
+  for_each = var.users
+
+  path = "auth/${vault_auth_backend.userpass.path}/users/${each.key}"
 
   data_json = jsonencode({
-    password = var.user_password
-    policies = [vault_policy.example.name]
+    password = each.value.password
+    policies = [vault_policy.users.name]
   })
+
+  depends_on = [vault_auth_backend.userpass]
 }
